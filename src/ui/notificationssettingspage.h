@@ -44,17 +44,8 @@ class NotificationsSettingsPage : public SettingsPage {
   void InsertVariableSecondLine(QAction* action);
   void ShowMenuTooltip(QAction* action);
 
-  void PrettyOpacityChanged(int value);
-  void PrettyColorPresetChanged(int index);
-  void ChooseBgColor();
-  void ChooseFgColor();
-  void ChooseFont();
-
-  void UpdatePopupVisible();
-
  private:
   Ui_NotificationsSettingsPage* ui_;
-  OSDPretty* pretty_popup_;
 };
 
 #endif  // NOTIFICATIONSSETTINGSPAGE_H
