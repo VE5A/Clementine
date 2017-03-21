@@ -989,9 +989,6 @@ MainWindow::MainWindow(Application* app, SystemTrayIcon* tray_icon, OSD* osd,
   app_->global_search()->ReloadSettings();
   global_search_view_->ReloadSettings();
 
-  // Reload pretty OSD to avoid issues with fonts
-  osd_->ReloadPrettyOSDSettings();
-
   // Reload playlist settings, for BG and glowing
   ui_->playlist->view()->ReloadSettings();
 
@@ -2223,9 +2220,6 @@ void MainWindow::CommandlineOptionsReceived(const CommandlineOptions& options) {
 }
 
 void MainWindow::ForceShowOSD(const Song& song, const bool toggle) {
-  if (toggle) {
-    osd_->SetPrettyOSDToggleMode(toggle);
-  }
   osd_->ReshowCurrentSong();
 }
 

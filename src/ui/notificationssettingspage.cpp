@@ -93,10 +93,6 @@ NotificationsSettingsPage::~NotificationsSettingsPage() {
   delete ui_;
 }
 
-void NotificationsSettingsPage::showEvent(QShowEvent*) { UpdatePopupVisible(); }
-
-void NotificationsSettingsPage::hideEvent(QHideEvent*) { UpdatePopupVisible(); }
-
 void NotificationsSettingsPage::Load() {
   QSettings s;
 
@@ -137,8 +133,6 @@ void NotificationsSettingsPage::Load() {
   ui_->notifications_custom_text1->setText(s.value("CustomText1").toString());
   ui_->notifications_custom_text2->setText(s.value("CustomText2").toString());
   s.endGroup();
-
-  UpdatePopupVisible();
 }
 
 void NotificationsSettingsPage::Save() {

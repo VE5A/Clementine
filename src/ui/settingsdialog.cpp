@@ -47,7 +47,6 @@
 #include "songinfo/songinfosettingspage.h"
 #include "transcoder/transcodersettingspage.h"
 #include "widgets/groupediconview.h"
-#include "widgets/osdpretty.h"
 
 #include "ui_settingsdialog.h"
 

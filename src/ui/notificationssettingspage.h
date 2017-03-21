@@ -32,10 +32,6 @@ class NotificationsSettingsPage : public SettingsPage {
   void Load();
   void Save();
 
- protected:
-  void hideEvent(QHideEvent*);
-  void showEvent(QShowEvent*);
-
  private slots:
   void NotificationTypeChanged();
   void NotificationCustomTextChanged(bool enabled);

@@ -20,7 +20,6 @@
 #include "core/logging.h"
 #include "covers/currentartloader.h"
 #include "osd.h"
-#include "osdpretty.h"
 #include "ui/iconloader.h"
 #include "ui/systemtrayicon.h"
 
@@ -49,8 +48,7 @@ OSD::OSD(SystemTrayIcon* tray_icon, Application* app, QObject* parent)
       custom_text2_(QString()),
       preview_mode_(false),
       force_show_next_(false),
-      ignore_next_stopped_(false),
-      pretty_popup_(new OSDPretty(OSDPretty::Mode_Popup)) {
+      ignore_next_stopped_(false) {
   connect(app_->current_art_loader(),
           SIGNAL(ThumbnailLoaded(Song, QString, QImage)),
           SLOT(AlbumArtLoaded(Song, QString, QImage)));
@@ -59,7 +57,7 @@ OSD::OSD(SystemTrayIcon* tray_icon, Application* app, QObject* parent)
   Init();
 }
 
-OSD::~OSD() { delete pretty_popup_; }
+OSD::~OSD() { }
 
 void OSD::ReloadSettings() {
   QSettings s;
@@ -74,17 +72,7 @@ void OSD::ReloadSettings() {
   custom_text1_ = s.value("CustomText1").toString();
   custom_text2_ = s.value("CustomText2").toString();
 
-  if (!SupportsNativeNotifications() && behaviour_ == Native)
-    behaviour_ = Pretty;
   if (!SupportsTrayPopups() && behaviour_ == TrayPopup) behaviour_ = Disabled;
-
-  ReloadPrettyOSDSettings();
-}
-
-// Reload just Pretty OSD settings, not everything
-void OSD::ReloadPrettyOSDSettings() {
-  pretty_popup_->set_popup_duration(timeout_msec_);
-  pretty_popup_->ReloadSettings();
 }
 
 void OSD::ReshowCurrentSong() {
@@ -201,35 +189,29 @@ void OSD::MagnatuneDownloadFinished(const QStringList& albums) {
 
 void OSD::ShowMessage(const QString& summary, const QString& message,
                       const QString& icon, const QImage& image) {
-  if (pretty_popup_->toggle_mode()) {
-    pretty_popup_->ShowMessage(summary, message, image);
-  } else {
-    switch (behaviour_) {
-      case Native:
-        if (image.isNull()) {
-          ShowMessageNative(summary, message, icon, QImage());
-        } else {
-          ShowMessageNative(summary, message, QString(), image);
-        }
-        break;
+  switch (behaviour_) {
+    case Native:
+      if (image.isNull()) {
+        ShowMessageNative(summary, message, icon, QImage());
+      } else {
+        ShowMessageNative(summary, message, QString(), image);
+      }
+      break;
 
 #ifndef Q_OS_DARWIN
-      case TrayPopup:
-        tray_icon_->ShowPopup(summary, message, timeout_msec_);
-        break;
+    case TrayPopup:
+      tray_icon_->ShowPopup(summary, message, timeout_msec_);
+      break;
 #endif
 
-      case Disabled:
-        if (!force_show_next_) break;
-        force_show_next_ = false;
-      // fallthrough
-      case Pretty:
-        pretty_popup_->ShowMessage(summary, message, image);
-        break;
+    case Disabled:
+      if (!force_show_next_) break;
+      force_show_next_ = false;
+    // fallthrough
+      break;
 
-      default:
-        break;
-    }
+    default:
+      break;
   }
 }
 
@@ -384,7 +366,6 @@ QString OSD::ReplaceVariable(const QString& variable, const Song& song) {
       case TrayPopup:
         qLog(Debug) << "New line not supported by this notification type";
         return "";
-      case Pretty:
       default:
         // When notifications are disabled, we force the PrettyOSD
         return "<br/>";
@@ -406,8 +387,4 @@ void OSD::ShowPreview(const Behaviour type, const QString& line1,
   // art loading is asynch
   preview_mode_ = true;
   AlbumArtLoaded(song, QString(), QImage());
-}
-
-void OSD::SetPrettyOSDToggleMode(bool toggle) {
-  pretty_popup_->set_toggle_mode(toggle);
 }

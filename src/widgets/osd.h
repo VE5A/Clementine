@@ -31,7 +31,6 @@
 
 class Application;
 class OrgFreedesktopNotificationsInterface;
-class OSDPretty;
 class SystemTrayIcon;
 
 class QDBusPendingCallWatcher;
@@ -56,16 +55,11 @@ class OSD : public QObject {
     Disabled = 0,
     Native,
     TrayPopup,
-    Pretty,
   };
 
   // Implemented in the OS-specific files
   static bool SupportsNativeNotifications();
   static bool SupportsTrayPopups();
-
-  void ReloadPrettyOSDSettings();
-
-  void SetPrettyOSDToggleMode(bool toggle);
 
  public slots:
   void ReloadSettings();
@@ -126,8 +120,6 @@ class OSD : public QObject {
 
   bool force_show_next_;
   bool ignore_next_stopped_;
-
-  OSDPretty* pretty_popup_;
 
   Song last_song_;
   QString last_image_uri_;
