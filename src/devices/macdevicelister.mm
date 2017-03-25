@@ -26,7 +26,7 @@
 #include <CoreFoundation/CFRunLoop.h>
 #include <DiskArbitration/DiskArbitration.h>
 #include <IOKit/kext/KextManager.h>
-#include <IOKit/IOCFPlugin.h>
+#include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/storage/IOMedia.h>
 #include <IOKit/storage/IOCDMedia.h>

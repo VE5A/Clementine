@@ -32,10 +32,6 @@ class NotificationsSettingsPage : public SettingsPage {
   void Load();
   void Save();
 
- protected:
-  void hideEvent(QHideEvent*);
-  void showEvent(QShowEvent*);
-
  private slots:
   void NotificationTypeChanged();
   void NotificationCustomTextChanged(bool enabled);
@@ -44,17 +40,8 @@ class NotificationsSettingsPage : public SettingsPage {
   void InsertVariableSecondLine(QAction* action);
   void ShowMenuTooltip(QAction* action);
 
-  void PrettyOpacityChanged(int value);
-  void PrettyColorPresetChanged(int index);
-  void ChooseBgColor();
-  void ChooseFgColor();
-  void ChooseFont();
-
-  void UpdatePopupVisible();
-
  private:
   Ui_NotificationsSettingsPage* ui_;
-  OSDPretty* pretty_popup_;
 };
 
 #endif  // NOTIFICATIONSSETTINGSPAGE_H
