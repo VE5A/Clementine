@@ -1458,6 +1458,8 @@ void Playlist::ReOrderWithoutUndo(const PlaylistItemList& new_items) {
                           index(new_rows[item], idx.column(), idx.parent()));
   }
 
+  current_virtual_index_ = virtual_items_.indexOf(current_row());
+
   layoutChanged();
 
   emit PlaylistChanged();
