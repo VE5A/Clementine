@@ -41,6 +41,11 @@ class SoundCloudService : public InternetService {
   QStandardItem* CreateRootItem();
   void LazyPopulate(QStandardItem* parent);
 
+  enum RequestMode {
+      GET,
+      PUT
+  };
+
   // TODO(Arnaud Bienner)
   // QList<QAction*> playlistitem_actions(const Song& song);
   void ShowContextMenu(const QPoint& global_pos);
@@ -77,10 +82,6 @@ class SoundCloudService : public InternetService {
   void Homepage();
 
  private:
-  enum RequestMode {
-	  GET,
-      PUT
-  };
   struct PlaylistInfo {
     PlaylistInfo() {}
     PlaylistInfo(int id, QStandardItem* item) : id_(id), item_(item) {}
@@ -103,9 +104,10 @@ class SoundCloudService : public InternetService {
   void EnsureMenuCreated();
 
   QStandardItem* CreatePlaylistItem(const QString& playlist_name);
+  QNetworkReply* CreateRequest(const QString &ressource_name,
+                               const QList<QPair<QString, QString>> &params,
+                               RequestMode mode = GET);
 
-  QNetworkReply* CreateRequest(const QString& ressource_name,
-                               const QList<QPair<QString, QString>>& params);
   // Convenient function for extracting result from reply
   QVariant ExtractResult(QNetworkReply* reply);
   // Returns items directly, as activities can be playlists or songs
