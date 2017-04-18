@@ -148,6 +148,7 @@
 #endif
 
 #include <cmath>
+#include <src/internet/soundcloud/soundcloudservice.h>
 
 #ifdef Q_OS_DARWIN
 // Non exported mac-specific function.
@@ -1513,7 +1514,13 @@ void MainWindow::ScrobbledRadioStream() {
 }
 
 void MainWindow::Love() {
+  qLog(Debug) << app_->playlist_manager()->current()->current_item()->Url().toString();
   app_->scrobbler()->Love();
+//  if (app_->playlist_manager()->current()->current_item()->Url().host() == "api.soundcloud.com") {
+//    SoundCloudService* soundCloudService = InternetModel::Service<SoundCloudService>();
+    // TODO: call addFavorites
+    //soundCloudService->
+//  }
   ui_->action_love->setEnabled(false);
   tray_icon_->LastFMButtonLoveStateChanged(false);
 }
