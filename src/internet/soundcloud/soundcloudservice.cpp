@@ -398,7 +398,8 @@ QStandardItem* SoundCloudService::CreatePlaylistItem(const QString& playlist_nam
 }
 
 QNetworkReply* SoundCloudService::CreateRequest(const QString& ressource_name,
-                                                const QList<Param>& params) {
+                                                const QList<Param>& params, 
+												RequestMode mode = RequestMode.GET) {
   QUrl url(kUrl);
 
   url.setPath(ressource_name);
@@ -412,7 +413,10 @@ QNetworkReply* SoundCloudService::CreateRequest(const QString& ressource_name,
 
   QNetworkRequest req(url);
   req.setRawHeader("Accept", "application/json");
-  QNetworkReply* reply = network_->get(req);
+  if (mode == RequestMode.GET)
+	QNetworkReply* reply = network_->get(req);
+  else if (mode == RequstMode.PUT)
+	QNetworkReply* reply = network_->put(req,QByteData());
   return reply;
 }
 

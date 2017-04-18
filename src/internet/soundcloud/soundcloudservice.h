@@ -77,6 +77,10 @@ class SoundCloudService : public InternetService {
   void Homepage();
 
  private:
+  enum RequestMode {
+	  GET,
+      PUT
+  };
   struct PlaylistInfo {
     PlaylistInfo() {}
     PlaylistInfo(int id, QStandardItem* item) : id_(id), item_(item) {}
