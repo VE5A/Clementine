@@ -430,9 +430,8 @@ QVariant SoundCloudService::ExtractResult(QNetworkReply* reply) {
     }
   }
   QJson::Parser parser;
-  bool ok;
-  QVariant result = parser.parse(reply, &ok);
-  if (!ok) {
+  QVariant result = parser.parse(reply->readAll());
+  if (result.isNull()) {
     qLog(Error) << "Error while parsing SoundCloud result";
   }
   return result;
