@@ -131,12 +131,13 @@ void OAuthenticator::FetchAccessTokenFinished(QNetworkReply* reply) {
   }
 
   QJson::Parser parser;
-  bool ok = false;
-  QVariantMap result = parser.parse(reply, &ok).toMap();
-  if (!ok) {
+
+  QVariant res = parser.parse(reply->readAll());
+  if (res.isNull()) {
     qLog(Error) << "Failed to parse oauth reply";
     return;
   }
+  QVariantMap result = res.toMap();
 
   access_token_ = result["access_token"].toString();
   refresh_token_ = result["refresh_token"].toString();
@@ -180,10 +181,15 @@ void OAuthenticator::SetExpiryTime(int expires_in_seconds) {
 
 void OAuthenticator::RefreshAccessTokenFinished(QNetworkReply* reply) {
   reply->deleteLater();
-  QJson::Parser parser;
-  bool ok = false;
 
-  QVariantMap result = parser.parse(reply, &ok).toMap();
+  QJson::Parser parser;
+  QVariant res = parser.parse(reply->readAll());
+  if (res.isNull()) {
+    qLog(Error) << "Failed to parse oauth reply";
+    return;
+  }
+  QVariantMap result = res.toMap();
+
   access_token_ = result["access_token"].toString();
   if (result.contains("refresh_token")) {
     refresh_token_ = result["refresh_token"].toString();
