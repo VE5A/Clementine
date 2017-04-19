@@ -361,6 +361,24 @@ int SoundCloudService::SimpleSearch(const QString& text) {
   return id;
 }
 
+void SoundCloudService::LikeCurrentSong() {
+  if (app_->playlist_manager()->current()->current_item()
+              ->Url().host() != "api.soundcloud.com") {
+    return;
+  }
+
+  auto current_item_url = app_->playlist_manager()->current()->current_item()->Url();
+  QRegExp regex_trackid("/[0-9]+/");
+  auto url_string = current_item_url.toString();
+  regex_trackid.indexIn(url_string);
+  QString trackIdStr = regex_trackid.capturedTexts().first();
+  int track_id = trackIdStr.mid(1, trackIdStr.length() - 2).toInt();
+
+  QList<Param> parameters;
+  parameters << Param("oauth_token", access_token_);
+  CreateRequest("me/favorites/" + QString::number(track_id), parameters, PUT);
+}
+
 void SoundCloudService::SimpleSearchFinished(QNetworkReply* reply, int id) {
   reply->deleteLater();
 

@@ -54,8 +54,9 @@ class SoundCloudService : public InternetService {
   void Connect();
   bool IsLoggedIn();
   void Logout();
-
+    
   int SimpleSearch(const QString& query);
+  void LikeCurrentSong();
 
   static const char* kServiceName;
   static const char* kSettingsGroup;

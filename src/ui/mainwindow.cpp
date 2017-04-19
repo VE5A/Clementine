@@ -1514,13 +1514,12 @@ void MainWindow::ScrobbledRadioStream() {
 }
 
 void MainWindow::Love() {
-  qLog(Debug) << app_->playlist_manager()->current()->current_item()->Url().toString();
+  // TODO: Add logic to selecting config windows
   app_->scrobbler()->Love();
-//  if (app_->playlist_manager()->current()->current_item()->Url().host() == "api.soundcloud.com") {
-//    SoundCloudService* soundCloudService = InternetModel::Service<SoundCloudService>();
-    // TODO: call addFavorites
-    //soundCloudService->
-//  }
+
+  SoundCloudService* sound_cloud_service = InternetModel::Service<SoundCloudService>();
+  sound_cloud_service->LikeCurrentSong();
+
   ui_->action_love->setEnabled(false);
   tray_icon_->LastFMButtonLoveStateChanged(false);
 }
