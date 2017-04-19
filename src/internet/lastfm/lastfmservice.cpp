@@ -390,8 +390,6 @@ void LastFMService::Scrobble() {
 }
 
 void LastFMService::Love() {
-  if (!IsAuthenticated()) ShowConfig();
-
   lastfm::MutableTrack mtrack(last_track_);
   mtrack.love();
   last_track_ = mtrack;

@@ -1514,11 +1514,20 @@ void MainWindow::ScrobbledRadioStream() {
 }
 
 void MainWindow::Love() {
-  // TODO: Add logic to selecting config windows
-  app_->scrobbler()->Love();
-
   SoundCloudService* sound_cloud_service = InternetModel::Service<SoundCloudService>();
-  sound_cloud_service->LikeCurrentSong();
+  bool lastFMLoggedIn = app_->scrobbler()->IsAuthenticated();
+  bool scLoggedIn = sound_cloud_service->IsLoggedIn();
+  if (scLoggedIn) {
+    sound_cloud_service->LikeCurrentSong();
+  }
+
+  if (!lastFMLoggedIn && !scLoggedIn) {
+    app_->scrobbler()->ShowConfig();
+  }
+
+  if (lastFMLoggedIn) {
+    app_->scrobbler()->Love();
+  }
 
   ui_->action_love->setEnabled(false);
   tray_icon_->LastFMButtonLoveStateChanged(false);
