@@ -22,6 +22,7 @@
 
 #include "library/libraryplaylistitem.h"
 #include "playlist/playlist.h"
+#include "ui/iconloader.h"
 #include "mock_settingsprovider.h"
 #include "mock_playlistitem.h"
 
@@ -36,13 +37,14 @@ namespace {
 class PlaylistTest : public ::testing::Test {
  protected:
   PlaylistTest()
-    : playlist_(nullptr, nullptr, nullptr, 1),
-      sequence_(nullptr, new DummySettingsProvider)
+    : playlist_(nullptr, nullptr, nullptr, 1)
   {
+    IconLoader::Init();
+    sequence_ = new PlaylistSequence(nullptr, new DummySettingsProvider);
   }
 
   void SetUp() {
-    playlist_.set_sequence(&sequence_);
+    playlist_.set_sequence(sequence_);
   }
 
   MockPlaylistItem* MakeMockItem(const QString& title,
@@ -66,7 +68,7 @@ class PlaylistTest : public ::testing::Test {
   }
 
   Playlist playlist_;
-  PlaylistSequence sequence_;
+  PlaylistSequence* sequence_;
 };
 
 TEST_F(PlaylistTest, Basic) {
@@ -380,8 +382,8 @@ TEST_F(PlaylistTest, UndoRemoveCurrent) {
   EXPECT_EQ(-1, playlist_.last_played_row());
 
   playlist_.undo_stack()->undo();
-  EXPECT_EQ(0, playlist_.current_row());
-  EXPECT_EQ(0, playlist_.last_played_row());
+  EXPECT_EQ(-1, playlist_.current_row());
+  EXPECT_EQ(-1, playlist_.last_played_row());
 }
 
 TEST_F(PlaylistTest, UndoRemoveOldCurrent) {
@@ -397,8 +399,8 @@ TEST_F(PlaylistTest, UndoRemoveOldCurrent) {
   playlist_.set_current_row(-1);
 
   playlist_.undo_stack()->undo();
-  EXPECT_EQ(0, playlist_.current_row());
-  EXPECT_EQ(0, playlist_.last_played_row());
+  EXPECT_EQ(-1, playlist_.current_row());
+  EXPECT_EQ(-1, playlist_.last_played_row());
 }
 
 TEST_F(PlaylistTest, ShuffleThenNext) {
