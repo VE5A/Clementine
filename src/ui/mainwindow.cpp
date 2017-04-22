@@ -148,6 +148,7 @@
 #endif
 
 #include <cmath>
+#include <src/internet/soundcloud/soundcloudservice.h>
 
 #ifdef Q_OS_DARWIN
 // Non exported mac-specific function.
@@ -1513,7 +1514,21 @@ void MainWindow::ScrobbledRadioStream() {
 }
 
 void MainWindow::Love() {
-  app_->scrobbler()->Love();
+  SoundCloudService* sound_cloud_service = InternetModel::Service<SoundCloudService>();
+  bool lastFMLoggedIn = app_->scrobbler()->IsAuthenticated();
+  bool scLoggedIn = sound_cloud_service->IsLoggedIn();
+  if (scLoggedIn) {
+    sound_cloud_service->LikeCurrentSong();
+  }
+
+  if (!lastFMLoggedIn && !scLoggedIn) {
+    app_->scrobbler()->ShowConfig();
+  }
+
+  if (lastFMLoggedIn) {
+    app_->scrobbler()->Love();
+  }
+
   ui_->action_love->setEnabled(false);
   tray_icon_->LastFMButtonLoveStateChanged(false);
 }

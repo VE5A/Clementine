@@ -361,6 +361,24 @@ int SoundCloudService::SimpleSearch(const QString& text) {
   return id;
 }
 
+void SoundCloudService::LikeCurrentSong() {
+  if (app_->playlist_manager()->current()->current_item()
+              ->Url().host() != "api.soundcloud.com") {
+    return;
+  }
+
+  auto current_item_url = app_->playlist_manager()->current()->current_item()->Url();
+  QRegExp regex_trackid("/[0-9]+/");
+  auto url_string = current_item_url.toString();
+  regex_trackid.indexIn(url_string);
+  QString trackIdStr = regex_trackid.capturedTexts().first();
+  int track_id = trackIdStr.mid(1, trackIdStr.length() - 2).toInt();
+
+  QList<Param> parameters;
+  parameters << Param("oauth_token", access_token_);
+  CreateRequest("me/favorites/" + QString::number(track_id), parameters, PUT);
+}
+
 void SoundCloudService::SimpleSearchFinished(QNetworkReply* reply, int id) {
   reply->deleteLater();
 
@@ -398,7 +416,8 @@ QStandardItem* SoundCloudService::CreatePlaylistItem(const QString& playlist_nam
 }
 
 QNetworkReply* SoundCloudService::CreateRequest(const QString& ressource_name,
-                                                const QList<Param>& params) {
+                                                const QList<Param>& params, 
+												                        RequestMode mode) {
   QUrl url(kUrl);
 
   url.setPath(ressource_name);
@@ -412,7 +431,15 @@ QNetworkReply* SoundCloudService::CreateRequest(const QString& ressource_name,
 
   QNetworkRequest req(url);
   req.setRawHeader("Accept", "application/json");
-  QNetworkReply* reply = network_->get(req);
+  QNetworkReply *reply = NULL;
+  switch (mode) {
+    case GET:
+      reply = network_->get(req);
+      break;
+    case PUT:
+      reply = network_->put(req, QByteArray());
+      break;
+  }
   return reply;
 }
 
@@ -430,9 +457,8 @@ QVariant SoundCloudService::ExtractResult(QNetworkReply* reply) {
     }
   }
   QJson::Parser parser;
-  bool ok;
-  QVariant result = parser.parse(reply, &ok);
-  if (!ok) {
+  QVariant result = parser.parse(reply->readAll());
+  if (result.isNull()) {
     qLog(Error) << "Error while parsing SoundCloud result";
   }
   return result;
